@@ -1,5 +1,3 @@
-import sys
-
 totals = []
 current = 0
 
