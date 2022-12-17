@@ -1,4 +1,5 @@
 from collections import deque
+import itertools
 
 
 def get_valves():
@@ -30,8 +31,6 @@ for valve in valves:
             valves[valve]["distances"][curr] = dist
             queue.extend([(nbr, dist + 1) for nbr in valves[curr]["neighbors"]])
 
-memoize = {}
-
 
 def search(valve, time, opened):
     id = (valve, time, frozenset(sorted(opened)))
@@ -43,15 +42,29 @@ def search(valve, time, opened):
     for neighbor in valves[valve]["distances"]:
         if neighbor not in opened:
             rate = valves[neighbor]["rate"]
-            # performance improvement: only explore valves that have rate > 0
+            # performance improvement: only consider valves with rate > 0
             if rate > 0:
                 diff_time = time - valves[valve]["distances"][neighbor] - 1
                 if diff_time > 0:
-                    total = max(total, rate * (diff_time) + search(neighbor, diff_time, opened | {valve}))
+                    total = max(total, rate * diff_time + search(neighbor, diff_time, opened | {valve}))
 
     memoize[id] = total
     return total
 
 
+memoize = {}
 total = search("AA", 30, set())
 print(f"Part 1: {total}")
+
+# part 2
+pos_valves = {valve for valve in valves if valves[valve]["rate"] > 0}
+memoize = {}
+
+# test all combinations of opened valves
+# use inversed set for elephant and find global maximum
+for valve in range(len(pos_valves) + 1):
+    for subset in itertools.combinations(pos_valves, valve):
+        total = max(total, search("AA", 26, set(subset)) + search("AA", 26, pos_valves - set(subset)))
+
+# quite slow
+print(f"Part 2: {total}")
