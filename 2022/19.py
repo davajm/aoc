@@ -39,4 +39,6 @@ geos = []
 for blueprint in blueprints:
     memoize = {}
     geos.append(search(blueprint, 0, 0, 0, 0, 1, 0, 0, 0, 24))
-print(geos)
+
+quality = sum([geo*(i+1) for i, geo in enumerate(geos)])
+print(f'Part 1: {quality}')
