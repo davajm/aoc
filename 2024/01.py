@@ -8,7 +8,7 @@ with open("inputs/01") as f:
         x, y = map(int, line.split())
         a.append(x)
         b.append(y)
-        
+
 
 tot = 0
 for i, j in zip(sorted(a), sorted(b)):
